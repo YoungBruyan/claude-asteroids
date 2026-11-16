@@ -62,6 +62,15 @@ const RADII  = [0, 16, 30, 50];   // por tamaño 1, 2, 3
 const SPEEDS = [0, 85, 55, 32];   // velocidad base por tamaño
 const POINTS = [0, 100, 50, 20];  // puntos por tamaño
 
+// Forma fija para asteroides grandes (trazada de Shape_asteroid_of_asteroids_arcade_game.png).
+// Coordenadas normalizadas: se multiplican por el radio del asteroide.
+const LARGE_SHAPE = [
+  [-0.04, -0.96], [ 0.51, -0.79], [ 0.40, -0.19], [ 0.96, -0.01],
+  [ 0.80,  0.60], [ 0.30,  0.58], [ 0.06,  0.97], [-0.63,  0.64],
+  [-0.96,  0.06], [-0.80, -0.57],
+];
+const LARGE_SHAPE_CHANCE = 0.35;  // probabilidad de usar la forma fija en un asteroide grande
+
 class Asteroid {
   constructor(x, y, size = 3) {
     this.x    = x;
@@ -76,6 +85,12 @@ class Asteroid {
     this.vy = Math.sin(angle) * speed;
     this.rotSpeed = rand(-1.2, 1.2);
     this.rot = rand(0, Math.PI * 2);
+
+    // Variante de forma fija para asteroides grandes
+    if (size === 3 && Math.random() < LARGE_SHAPE_CHANCE) {
+      this.verts = LARGE_SHAPE.map(([x, y]) => [x * this.radius, y * this.radius]);
+      return;
+    }
 
     // Polígono irregular
     const n = randInt(8, 13);
